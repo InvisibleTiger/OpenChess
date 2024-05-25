@@ -48,10 +48,10 @@ class GameState():
 
         if move.isCastleMove:
             if move.endCol - move.startCol == 2: # kingside
-                self.board[move.endRow][move.endCol - 1] = self.board[move.endRow][move.endCol + 1]]
+                self.board[move.endRow][move.endCol - 1] = move.pieceMoved[0] + "R"
                 self.board[move.endRow][move.endCol + 1] = "--"
             else: #queenside
-                self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 2]
+                self.board[move.endRow][move.endCol + 1] = move.pieceMoved[0] + "R"
                 self.board[move.endRow][move.endCol - 2] = "--"
 
         self.updateCastleRights(move)
