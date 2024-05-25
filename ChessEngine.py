@@ -20,6 +20,8 @@ class GameState():
         self.inCheck = False
         self.pins = []
         self.checks = []
+        self.checkmate = False
+        self.stalemate = False
         self.enpassantPossible = ()
         self.currentCastlingRight = CastleRights(True, True, True, True)
         self.castleRightsLog = [CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks,
@@ -132,7 +134,7 @@ class GameState():
                     validSquares = [(checkRow, checkCol)]
                 else:
                     for i in range(1, 8):
-                        validSquare = (kingRow + check[2] * i, kingCol + check[3] * i)
+                        validSquare = (kingRow + check[0] * i, kingCol + check[1] * i) # was 2 and 3 before
                         validSquares.append(validSquare)
                         if validSquares[0] == checkRow and validSquares[1] == checkCol:
                             break
@@ -145,6 +147,16 @@ class GameState():
         else:
             moves = self.getAllPossibleMoves()
         self.getCastleMoves(kingRow, kingCol, moves)
+
+        if len(moves) == 0:
+            if self.inCheck:
+                self.checkmate = True
+            else:
+                self.stalemate = True
+        else:
+            self.checkmate = False
+            self.stalemate = False
+
         return moves
 
     def checkForPinsAndChecks(self):
