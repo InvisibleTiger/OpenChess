@@ -1,7 +1,7 @@
 import pygame as p
 import ChessEngine
 
-# FINISHED UNTIL VID 7
+# FINISHED UNTIL VID 9
 
 WIDTH = HEIGHT = 512
 DIMENSION = 8
@@ -28,6 +28,7 @@ def main():
     running = True
     sqSelected = ()
     playerClicks = []
+
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -62,15 +63,30 @@ def main():
             validMoves = gs.getValidMoves()
             moveMade = False
 
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, validMoves, sqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
 
-def drawGameState(screen, gs):
+def highlightSquares(screen, gs, validMoves, sqSelected):
+    if sqSelected != ():
+        r, c = sqSelected
+        if gs.board[r][c][0] == ("w" if gs.whiteToMove else "b"):
+            s = p.Surface((SQ_SIZE, SQ_SIZE))
+            s.set_alpha(100)
+            s.fill(p.Color("blue"))
+            screen.blit(s, (c * SQ_SIZE, r * SQ_SIZE))
+            s.fill(p.Color("yellow"))
+            for move in validMoves:
+                if move.startRow == r and move.startCol == c:
+                    screen.blit(s, (move.endCol * SQ_SIZE, move.endRow * SQ_SIZE))
+
+def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen)
+    highlightSquares(screen, gs, validMoves, sqSelected)
     drawPieces(screen, gs.board)
 
 def drawBoard(screen):
+    global colors
     colors = [p.Color("white"), p.Color("gray")]
     for r in range(DIMENSION):
         for c in range(DIMENSION):
@@ -84,7 +100,9 @@ def drawPieces(screen, board):
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-
+def animateMove(move, screen, board, clock):
+    global colors
+    coords = []
 
 if __name__ == "__main__":
     main()
