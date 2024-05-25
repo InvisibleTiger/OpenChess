@@ -51,8 +51,8 @@ class GameState():
                 self.board[move.endRow][move.endCol - 1] = move.pieceMoved[0] + "R"
                 self.board[move.endRow][move.endCol + 1] = "--"
             else: #queenside
-                self.board[move.endRow][move.endCol + 1] = move.pieceMoved[0] + "R"
-                self.board[move.endRow][move.endCol - 2] = "--"
+                self.board[move.endRow][move.endCol + 2] = move.pieceMoved[0] + "R"
+                self.board[move.endRow][move.endCol - 1] = "--"
 
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks,
@@ -81,11 +81,11 @@ class GameState():
 
             if move.isCastleMove:
                 if move.endCol - move.startCol == 2:
-                    self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 1]
+                    self.board[move.endRow][move.endCol + 1] = move.pieceMoved[0] + "R"
                     self.board[move.endRow][move.endCol - 1] = "--"
                 else:
-                    self.board[move.endRow][move.endCol - 2] = self.board[move.endRow][move.endCol + 1]
-                    self.board[move.endRow][move.endCol + 1] = "--"
+                    self.board[move.endRow][move.endCol - 1] = move.pieceMoved[0] + "R"
+                    self.board[move.endRow][move.endCol + 2] = "--"
 
 
     def updateCastleRights(self, move):
@@ -397,7 +397,7 @@ class GameState():
         if (self.whiteToMove and self.currentCastlingRight.wks) or (not self.whiteToMove and self.currentCastlingRight.bks):
             self.getKingsideCastleMoves(r, c, moves)
         if (self.whiteToMove and self.currentCastlingRight.wqs) or (not self.whiteToMove and self.currentCastlingRight.bqs):
-            self.getKingsideCastleMoves(r, c, moves)
+            self.getQueensideCastleMoves(r, c, moves)
 
     def getKingsideCastleMoves(self, r, c, moves):
         if self.board[r][c + 1] == "--" and self.board[r][c + 2] == "--":
@@ -406,8 +406,8 @@ class GameState():
 
     def getQueensideCastleMoves(self, r, c, moves):
         if self.board[r][c - 1] == "--" and self.board[r][c - 2] == "--" and self.board[r][c - 3] == "--":
-            if not self.squareUnderAttack(r, c - 1) and not self.squareUnderAttack(r, c + 2):
-                moves.append(Move((r, c), (r, c - 2), self.board, isCastleMove=True))
+            if not self.squareUnderAttack(r, c - 1) and not self.squareUnderAttack(r, c - 2) and not self.squareUnderAttack(r, c - 3):
+                moves.append(Move((r, c), (r, c - 3), self.board, isCastleMove=True))
 
 
 class CastleRights():
