@@ -2,7 +2,7 @@ import pygame as p
 import ChessEngine
 import SmartMoveFinder
 
-# FINISHED UNTIL VID 11
+# FINISHED UNTIL VID 13
 
 WIDTH = HEIGHT = 512
 DIMENSION = 8
@@ -66,6 +66,7 @@ def main():
                     gs.undoMove()
                     moveMade = True
                     animate = False
+                    gameOver = False
                 if e.key == p.K_r:
                     gs = ChessEngine.GameState()
                     validMoves = gs.getValidMoves()
@@ -73,9 +74,10 @@ def main():
                     playerClicks = []
                     moveMade = False
                     animate = False
+                    gameOver = False
 
         if not gameOver and not humanTurn:
-            AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
+            AIMove = SmartMoveFinder.findBestMoveMinMax(gs, validMoves)
             if AIMove is None:
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
