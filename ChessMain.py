@@ -2,7 +2,7 @@ import pygame as p
 import ChessEngine
 import SmartMoveFinder
 
-# FINISHED UNTIL VID 9
+# FINISHED UNTIL VID 11
 
 WIDTH = HEIGHT = 512
 DIMENSION = 8
@@ -30,7 +30,7 @@ def main():
     sqSelected = ()
     playerClicks = []
     gameOver = False
-    playerOne = False # false is AI and true is human
+    playerOne = True # false is AI and true is human
     playerTwo = False
 
     while running:
@@ -75,7 +75,9 @@ def main():
                     animate = False
 
         if not gameOver and not humanTurn:
-            AIMove = SmartMoveFinder.findRandomMove(validMoves)
+            AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
+            if AIMove is None:
+                AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
             moveMade = True
             animate = True
