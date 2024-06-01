@@ -77,7 +77,7 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
-            AIMove = SmartMoveFinder.findBestMoveMinMax(gs, validMoves)
+            AIMove = SmartMoveFinder.findBestMove(gs, validMoves)
             if AIMove is None:
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
             gs.makeMove(AIMove)
