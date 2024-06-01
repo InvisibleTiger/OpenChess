@@ -97,6 +97,8 @@ def scoreBoard(gs):
             elif square[0] == "b":
                 score -= pieceScore[square[1]]
 
+    return score
+
 
 def scoreMaterial(board):
     score = 0
