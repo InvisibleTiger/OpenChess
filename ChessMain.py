@@ -31,7 +31,7 @@ def main():
     playerClicks = []
     gameOver = False
     playerOne = True # false is AI and true is human
-    playerTwo = False
+    playerTwo = True
 
     while running:
         humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)

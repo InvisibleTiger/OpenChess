@@ -23,6 +23,7 @@ class GameState():
         self.checkmate = False
         self.stalemate = False
         self.enpassantPossible = ()
+        self.enPassantPossibleLog = [self.enpassantPossible]
         self.currentCastlingRight = CastleRights(True, True, True, True)
         self.castleRightsLog = [CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks,
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs)]
@@ -56,6 +57,8 @@ class GameState():
                 self.board[move.endRow][move.endCol + 2] = move.pieceMoved[0] + "R"
                 self.board[move.endRow][move.endCol - 1] = "--"
 
+        self.enPassantPossibleLog.append(self.enpassantPossible)
+
         self.updateCastleRights(move)
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks,
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
@@ -71,12 +74,20 @@ class GameState():
             elif move.pieceMoved == "bK":
                 self.blackKingLocation = (move.startRow, move.startCol)
             
+            # old
+            # if move.isEnpassantMove:
+            #     self.board[move.endRow][move.endCol] = "--"
+            #     self.board[move.startRow][move.endCol] = move.pieceCaptured
+            #     self.enpassantPossible = (move.endRow, move.endCol)
+            # if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
+            #     self.enpassantPossible = ()
+
             if move.isEnpassantMove:
                 self.board[move.endRow][move.endCol] = "--"
                 self.board[move.startRow][move.endCol] = move.pieceCaptured
-                self.enpassantPossible = (move.endRow, move.endCol)
-            if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
-                self.enpassantPossible = []
+
+            self.enPassantPossibleLog.pop()
+            self.enpassantPossible = self.enPassantPossibleLog[-1]
 
             self.castleRightsLog.pop()
             self.currentCastlingRight = self.castleRightsLog[-1]
@@ -89,8 +100,8 @@ class GameState():
                     self.board[move.endRow][move.endCol - 1] = move.pieceMoved[0] + "R"
                     self.board[move.endRow][move.endCol + 2] = "--"
 
-        self.checkmate = False
-        self.stalemate = False
+            self.checkmate = False
+            self.stalemate = False
 
 
     def updateCastleRights(self, move):
@@ -111,6 +122,20 @@ class GameState():
                 if move.startCol == 0:
                     self.currentCastlingRight.bqs = False
                 elif move.startCol == 7:
+                    self.currentCastlingRight.bks = False
+
+        # castling bug, theoretical
+        if move.pieceCaptured == "wR":
+            if move.endRow == 7:
+                if move.endCol == 0:
+                    self.currentCastlingRight.wqs = False
+                elif move.endCol == 7:
+                    self.currentCastlingRight.wks = False
+        elif move.pieceCaptured == "bR":
+            if move.endRow == 0:
+                if move.endCol == 0:
+                    self.currentCastlingRight.bqs = False
+                elif move.endCol == 7:
                     self.currentCastlingRight.bks = False
 
     def getValidMoves(self):
