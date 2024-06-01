@@ -8,48 +8,44 @@ DEPTH = 2
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves) - 1)]
 
-def findBestMoveOLd(gs, validMoves): # old
-    turnMultiplier = 1 if gs.whiteToMove else -1
-    opponentMinMaxScore = CHECKMATE
-    bestPlayerMove = None
-    random.shuffle(validMoves)
-    for playerMove in validMoves:
-        gs.makeMove(playerMove)
-        opponentsMoves = gs.getValidMoves()
-        if gs.stalemate:
-            opponentMaxScore = STALEMATE
-        elif gs.checkmate:
-            opponentMaxScore = -CHECKMATE
-        else:
-            opponentMaxScore = -CHECKMATE
-            for opponentsMove in opponentsMoves:
-                gs.makeMove(opponentsMove)
-                gs.getValidMoves()
-                if gs.checkmate:
-                    score = CHECKMATE
-                elif gs.stalemate:
-                    score = STALEMATE
-                else:
-                    score = -turnMultiplier * scoreMaterial(gs.board)
-                if score > opponentMaxScore:
-                    opponentMaxScore = score
-                gs.undoMove()
-        if opponentMaxScore < opponentMinMaxScore:
-            opponentMinMaxScore = opponentMaxScore
-            bestPlayerMove = playerMove
-        gs.undoMove()
-    return bestPlayerMove
-
-# def findBestMoveMinMax(gs, validMoves): #for min max
-#     global nextMove
-#     nextMove = None
-#     findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
-#     return nextMove
+# def findBestMove(gs, validMoves): # old
+#     turnMultiplier = 1 if gs.whiteToMove else -1
+#     opponentMinMaxScore = CHECKMATE
+#     bestPlayerMove = None
+#     random.shuffle(validMoves)
+#     for playerMove in validMoves:
+#         gs.makeMove(playerMove)
+#         opponentsMoves = gs.getValidMoves()
+#         if gs.stalemate:
+#             opponentMaxScore = STALEMATE
+#         elif gs.checkmate:
+#             opponentMaxScore = -CHECKMATE
+#         else:
+#             opponentMaxScore = -CHECKMATE
+#             for opponentsMove in opponentsMoves:
+#                 gs.makeMove(opponentsMove)
+#                 gs.getValidMoves()
+#                 if gs.checkmate:
+#                     score = CHECKMATE
+#                 elif gs.stalemate:
+#                     score = STALEMATE
+#                 else:
+#                     score = -turnMultiplier * scoreMaterial(gs.board)
+#                 if score > opponentMaxScore:
+#                     opponentMaxScore = score
+#                 gs.undoMove()
+#         if opponentMaxScore < opponentMinMaxScore:
+#             opponentMinMaxScore = opponentMaxScore
+#             bestPlayerMove = playerMove
+#         gs.undoMove()
+#     return bestPlayerMove
 
 def findBestMove(gs, validMoves):
     global nextMove
     nextMove = None
-    findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
+    # findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
+    # findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
+    findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)
     return nextMove
 
 def findMoveMinMax(gs, validMoves, depth, whiteToMove):
@@ -98,6 +94,30 @@ def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
             if depth == DEPTH:
                 nextMove = move
         gs.undoMove()
+
+    return maxScore
+
+def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier):
+    global nextMove
+    if depth == 0:
+        return turnMultiplier * scoreBoard(gs)
+    
+    # to be done, move ordering to score good moves then less good moves
+
+    maxScore = -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMoves = gs.getValidMoves()
+        score = -findMoveNegaMaxAlphaBeta(gs, nextMoves, depth - 1, -beta, -alpha, -turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move
+        gs.undoMove()
+        if maxScore > alpha: # pruneing
+            alpha = maxScore
+        if alpha >= beta:
+            break
 
     return maxScore
     
