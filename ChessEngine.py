@@ -504,7 +504,7 @@ class Move():
         
         if self.pieceMoved[1] == "p":
             if self.isCapture:
-                return self.colsToFile[self.startCol] + "x" + endSquare
+                return self.colsToFiles[self.startCol] + "x" + endSquare
             else:
                 return endSquare
 
