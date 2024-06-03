@@ -162,7 +162,7 @@ class GameState():
                     validSquares = [(checkRow, checkCol)]
                 else:
                     for i in range(1, 8):
-                        validSquare = (kingRow + check[0] * i, kingCol + check[1] * i) # was 2 and 3 before
+                        validSquare = (kingRow + check[2] * i, kingCol + check[3] * i) # was 2 and 3 before RECHANGED WAS 0 AND 1
                         validSquares.append(validSquare)
                         if validSquares[0] == checkRow and validSquares[1] == checkCol:
                             break
@@ -273,7 +273,7 @@ class GameState():
         piecePinned = False
         pinDirection = ()
         for i in range(len(self.pins) - 1, -1, -1):
-            if self.pins[i][0] == r and self.pins[i][0] == c:
+            if self.pins[i][0] == r and self.pins[i][1] == c:
                 piecePinned = True
                 pinDirection = (self.pins[i][2], self.pins[i][3])
                 self.pins.remove(self.pins[i])
@@ -333,7 +333,7 @@ class GameState():
                 pinDirection = (self.pins[i][2], self.pins[i][3])
                 if self.board[r][c][1] != "Q":
                     self.pins.remove(self.pins[i])
-                    break
+                break
 
         directions = ((-1, 0), (0, -1), (1, 0), (0, 1))
         enemyColor = "b" if self.whiteToMove else "w"
@@ -357,7 +357,7 @@ class GameState():
     def getKnightMoves(self, r, c, moves):
         piecePinned = False
         for i in range(len(self.pins) - 1, -1, -1):
-            if self.pins[i][0] == r and self.pins[i][0] == c:
+            if self.pins[i][0] == r and self.pins[i][1] == c:
                 piecePinned = True
                 self.pins.remove(self.pins[i])
                 break
